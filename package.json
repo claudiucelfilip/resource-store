@@ -1,0 +1,23 @@
+{
+  "name": "resource",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "webpack --mode development",
+    "start:dev": "webpack-dev-server --inline"
+  },
+  "dependencies": {
+    "css-loader": "^1.0.0",
+    "http-server": "^0.11.1",
+    "rxjs": "6.3.3",
+    "rxjs-compat": "6.3.3",
+    "style-loader": "^0.23.0",
+    "ts-loader": "^5.2.1",
+    "typescript": "^3.0.3",
+    "webpack": "^4.20.2",
+    "webpack-dev-server": "^3.1.9"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.1.1"
+  }
+}
