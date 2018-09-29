@@ -5,8 +5,8 @@ import { BehaviorSubject } from 'rxjs';
 import { columns, getRandom } from './utils';
 import { ajaxConnector } from './ajaxConnector';
 
-export interface TrackData extends Resource<any> {
-  key: string;
+export interface TrackData extends Resource {
+  key: BehaviorSubject<string>;
   id: BehaviorSubject<string>;
   tracks: BehaviorSubject<number[]>;
   columns: BehaviorSubject<string[]>;

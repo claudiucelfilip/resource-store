@@ -11,7 +11,7 @@ export interface ResourceOptions {
   initialState?: any;
 }
 
-export class Resource<T> extends BehaviorSubject<T> {
+export class Resource extends BehaviorSubject<any> {
   constructor(key: string, options: ResourceOptions = {}) {
     let initialState = options.initialState || {};
     super(initialState);
@@ -26,7 +26,7 @@ export class Resource<T> extends BehaviorSubject<T> {
     }
   }
 
-  public fetch(): Promise<T> {
+  public fetch(): Promise<any> {
     if (!this[symbol.connector]) {
       throw new Error('No connector added to Resource');
     }

@@ -3,14 +3,12 @@ import { ResourceOptions, Resource } from '../resource';
 import { BehaviorSubject } from 'rxjs';
 import { symbol } from '../utils';
 
-interface Data {
-  key: string;
+interface DataResource extends Resource {
+  key: BehaviorSubject<string>;
   id: BehaviorSubject<string>;
   tracks: BehaviorSubject<number[]>;
   columns: BehaviorSubject<string[]>;
 };
-
-interface DataResource extends Data, Resource<Data> { }
 
 describe('ResourceStore', () => {
   let store: ResourceStore;
@@ -36,6 +34,7 @@ describe('ResourceStore', () => {
   it('should get different resources for different keys', async () => {
     const res1 = store.get<DataResource>('res-1');
     const res2 = store.get<DataResource>('res-2');
+    
     expect(res1).toBeTruthy();
     expect(res2).toBeTruthy();
 
