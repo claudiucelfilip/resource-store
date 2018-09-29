@@ -1,19 +1,46 @@
 import { Observable, BehaviorSubject } from 'rxjs';
 import { pluck, distinctUntilChanged, filter, skip, shareReplay, switchMap, publish } from 'rxjs/operators';
+import { symbol } from './utils';
+
 import 'rxjs/add/operator/skip';
 
-export const symbolKey = Symbol.for('key');
-export const symbolId = Symbol.for('id');
+export interface ResourceOptions {
+  connector?: IResourceConnector;
+  autoSave?: boolean;
+  autoFetch?: boolean;
+  initialState?: any;
+}
 
-export class Resource extends BehaviorSubject<any> {
+export class Resource<T> extends BehaviorSubject<T> {
+  constructor(key: string, options: ResourceOptions = {}) {
+    let initialState = options.initialState || {};
+    super(initialState);
+    this[symbol.key] = key;
+    this[symbol.id] = Math.floor((Math.random() * 1000) + 1);
+    this[symbol.connector] = options.connector;
+    this[symbol.autoSave] = options.autoSave;
+    this[symbol.autoFetch] = options.autoFetch;
 
-  constructor(key, data = {}) {
-    super(data);
-    this[symbolKey] = key;
-    this[symbolId] = Math.floor((Math.random() * 1000) + 1);
+    if (this[symbol.autoFetch]) {
+      this.fetch();
+    }
   }
 
-  public select(key: string = ''): BehaviorSubject<any> {
+  public fetch(): Promise<T> {
+    if (!this[symbol.connector]) {
+      throw new Error('No connector added to Resource');
+    }
+    return this[symbol.connector].fetch().then(response => this.next(response || null));
+  }
+
+  public save(key: string = '', value: any = this.value): Promise<any> {
+    if (!this[symbol.connector]) {
+      throw new Error('No connector added to Resource');
+    }
+    return this[symbol.connector].save(key, value);
+  }
+
+  [symbol.select] (key: string = ''): BehaviorSubject<any> {
     if (!key) {
       return this;
     }
@@ -28,7 +55,7 @@ export class Resource extends BehaviorSubject<any> {
     const proxy = new Proxy(stream, {
       get: (target, name, receiver) => {
         if (name === 'next') {
-          return this.set.bind(this, key);
+          return this[symbol.set].bind(this, key);
         }
         return target[name];
       }
@@ -36,9 +63,22 @@ export class Resource extends BehaviorSubject<any> {
     return proxy;
   }
 
-  public set(key: string, value: any) {
-    this.next(Object.assign({}, this.value, {
-      [key]: value
-    }));
+  [symbol.set] (key: string, value: any = {}): Promise<any> | void {
+    if (typeof key !== 'string') {
+      value = key;
+      key = '';
+    }
+    if (!key) {
+      this.next(value);
+      
+    } else {
+      this.next(Object.assign({}, this.value, {
+        [key]: value
+      }));
+    }
+  
+    if (this[symbol.autoSave]) {
+      return this.save(key, value);
+    }
   }
 }
