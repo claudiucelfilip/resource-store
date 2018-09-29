@@ -1,4 +1,3 @@
-import axios from 'axios';
 
 export const ajaxConnector: IResourceConnector = {
 	fetch: () => {
@@ -8,6 +7,6 @@ export const ajaxConnector: IResourceConnector = {
 		if (key) {
 			key = '/' + key;
 		}
-		return axios.post('http://resource-test.getsandbox.com/music' + key, value);
+		return Promise.resolve({});
 	}
 };
