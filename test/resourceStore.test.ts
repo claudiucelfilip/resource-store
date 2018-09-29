@@ -1,7 +1,7 @@
-import { ResourceStore } from '../ResourceStore';
-import { ResourceOptions, Resource } from '../resource';
+import { ResourceStore } from '../src';
+import { IResourceOptions, Resource } from '../src';
 import { BehaviorSubject } from 'rxjs';
-import { symbol } from '../utils';
+import { symbol } from '../src';
 
 interface DataResource extends Resource {
   key: BehaviorSubject<string>;
@@ -20,7 +20,7 @@ describe('ResourceStore', () => {
   };
 
   beforeEach(() => {
-    const resOptions: ResourceOptions = {
+    const resOptions: IResourceOptions = {
       initialState
     };
 

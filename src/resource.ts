@@ -4,7 +4,7 @@ import { symbol } from './utils';
 
 import 'rxjs/add/operator/skip';
 
-export interface ResourceOptions {
+export interface IResourceOptions {
   connector?: IResourceConnector;
   autoSave?: boolean;
   autoFetch?: boolean;
@@ -12,7 +12,7 @@ export interface ResourceOptions {
 }
 
 export class Resource extends BehaviorSubject<any> {
-  constructor(key: string, options: ResourceOptions = {}) {
+  constructor(key: string, options: IResourceOptions = {}) {
     let initialState = options.initialState || {};
     super(initialState);
     this[symbol.key] = key;

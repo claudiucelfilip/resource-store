@@ -1,18 +1,8 @@
-import { ResourceStore } from '../ResourceStore';
-import { ResourceOptions, Resource } from '../resource';
-import { ajaxConnector } from './connectors';
+import { IResourceOptions, Resource } from '../src';
 import { BehaviorSubject } from 'rxjs';
-import { symbol } from '../utils';
-
-interface DataResource extends Resource {
-  key: string;
-  id: BehaviorSubject<string>;
-  tracks: BehaviorSubject<number[]>;
-  columns: BehaviorSubject<string[]>;
-};
+import { symbol } from '../src';
 
 describe('Resource', () => {
-
   const initialState = {
     key: 'state-key',
     id: 0,
@@ -34,7 +24,7 @@ describe('Resource', () => {
     }
   };
 
-  const resOptions: ResourceOptions = {
+  const resOptions: IResourceOptions = {
     initialState: initialState
   };
 

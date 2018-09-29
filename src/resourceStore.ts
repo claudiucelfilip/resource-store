@@ -1,6 +1,6 @@
 import { symbol } from './utils';
-import { Resource, ResourceOptions } from './resource';
-import { BehaviorSubject } from 'rxjs';
+import { Resource } from './resource';
+
 
 export class ResourceStore {
   private resources = {};
