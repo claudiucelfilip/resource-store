@@ -7,7 +7,10 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        path: __dirname + '/lib'
+        path: __dirname + '/lib',
+        libraryTarget: 'umd',
+        library: 'resource-store',
+        umdNamedDefine: true
     },
     resolve: {
         // Add `.ts` and `.tsx` as a resolvable extension.

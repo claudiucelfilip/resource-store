@@ -2,9 +2,10 @@
   "name": "resource-store",
   "version": "0.1.1",
   "private": true,
+  "main": "lib",
   "scripts": {
     "build": "webpack",
-    "postinstall": "npm run build",
+    "watch": "webpack --watch",
     "start": "webpack --mode development",
     "start:dev": "webpack-dev-server --inline",
     "test": "jest",
@@ -22,15 +23,15 @@
     ]
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "css-loader": "^1.0.0",
     "rxjs": "6.3.3",
     "rxjs-compat": "6.3.3",
-    "ts-loader": "^5.2.1",
-    "webpack-cli": "^3.1.1",
-    "axios": "^0.18.0",
     "style-loader": "^0.23.0",
-    "css-loader": "^1.0.0",
+    "ts-loader": "^5.2.1",
     "typescript": "^3.0.3",
-    "webpack": "^4.20.2"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.1"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.1.9",
