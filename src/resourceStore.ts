@@ -37,10 +37,6 @@ export class ResourceStore {
 
         let stream = resource[symbol.select](name);
         return stream;
-      },
-      set: function (target, name: string, value) {
-        target.set(name, value);
-        return true;
       }
     });
 
