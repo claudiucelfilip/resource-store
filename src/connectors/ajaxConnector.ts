@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { IResourceConnector } from './resourceConnector';
 
 export const ajaxConnector: IResourceConnector = {
   fetch: () => {

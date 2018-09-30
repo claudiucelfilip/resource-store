@@ -1,6 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { pluck, distinctUntilChanged, filter, skip, shareReplay, switchMap, publish } from 'rxjs/operators';
 import { symbol } from './utils';
+import { IResourceConnector } from './connectors/resourceConnector';
 
 export interface IResourceOptions {
   connector?: IResourceConnector;
