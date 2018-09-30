@@ -4,6 +4,7 @@
   "private": true,
   "main": "lib",
   "scripts": {
+    "postinstall": "npm run build",
     "build": "webpack",
     "watch": "webpack --watch",
     "start": "webpack --mode development",
