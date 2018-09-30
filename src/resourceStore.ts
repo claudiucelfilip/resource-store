@@ -12,7 +12,7 @@ export class ResourceStore {
       });
   }
 
-  add<T> (key: string, resource: Resource) {
+  add (key: string, resource: Resource) {
     this.resources[key] = resource;
   }
 

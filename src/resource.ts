@@ -1,8 +1,6 @@
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { pluck, distinctUntilChanged, filter, skip, shareReplay, switchMap, publish } from 'rxjs/operators';
 import { symbol } from './utils';
-
-import 'rxjs/add/operator/skip';
 
 export interface IResourceOptions {
   connector?: IResourceConnector;
