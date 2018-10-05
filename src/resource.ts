@@ -3,6 +3,10 @@ import { pluck, distinctUntilChanged, filter, skip, shareReplay, switchMap, publ
 import { symbol } from './utils';
 import { IResourceConnector } from './connectors/resourceConnector';
 
+export interface ResourceSubject<T> extends BehaviorSubject<T> {
+  parent: Resource;
+  key: string
+}
 export interface IResourceOptions {
   connector?: IResourceConnector;
   autoSave?: boolean;
@@ -56,11 +60,13 @@ export class Resource extends BehaviorSubject<any> {
     ).subscribe(values => stream.next(values));
 
     const proxy = new Proxy(stream, {
-      get: (target, name, receiver) => {
-        if (name === 'next') {
-          return this[symbol.set].bind(this, key);
+      get: (target, name: string) => {
+        switch(name) {
+          case 'next': return this[symbol.set].bind(this, key);
+          case 'key': return this[symbol.key];
+          case 'parent': return this;
+          default: return target[name];
         }
-        return target[name];
       }
     })
     return proxy;

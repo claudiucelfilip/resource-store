@@ -1,4 +1,4 @@
-import { IResourceOptions, Resource } from '../src';
+import { IResourceOptions, Resource, IResourceConnector } from '../src';
 import { BehaviorSubject } from 'rxjs';
 import { symbol } from '../src';
 
@@ -35,7 +35,7 @@ describe('Resource', () => {
     expect(res1).toBeInstanceOf(BehaviorSubject);
     expect(res1.value).toEqual(resOptions.initialState);
   });
-
+  
   it('should use a connector to fetch and save', async () => {
     const res1: any = new Resource('res-1', {
       connector: ajaxConnector

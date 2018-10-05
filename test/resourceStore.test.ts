@@ -50,6 +50,15 @@ describe('ResourceStore', () => {
     expect(res1[symbol.id]).toEqual(res2[symbol.id]);
   });
 
+  it('should be able to retrieve store key from a stream', async () => {
+    const res1 = store.get<DataResource>('res-1');
+    expect(res1.tracks.key).toEqual('res-1');
+  });
+
+  it('should be able to retrieve parent store from a stream', async () => {
+    const res1 = store.get<DataResource>('res-1');
+    expect(res1.tracks.parent[symbol.key]).toEqual('res-1');
+  });
 
   it('should throw error for non-existing key', async () => {
     expect(store.get.bind('res-non-existing')).toThrow(Error);

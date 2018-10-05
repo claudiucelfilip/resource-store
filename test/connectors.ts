@@ -1,4 +1,4 @@
-
+import { IResourceConnector } from '../src';
 export const ajaxConnector: IResourceConnector = {
 	fetch: () => {
 		return Promise.resolve({});

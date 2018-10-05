@@ -5,15 +5,16 @@ import {
   columns,
   getRandom,
   ajaxConnector,
-  localStorageConnector
+  localStorageConnector,
+  ResourceSubject
  } from './src';
 import { BehaviorSubject } from 'rxjs';
 
 interface TrackData extends Resource {
-  key: BehaviorSubject<string>;
-  id: BehaviorSubject<string>;
-  tracks: BehaviorSubject<number[]>;
-  columns: BehaviorSubject<string[]>;
+  key: ResourceSubject<string>;
+  id: ResourceSubject<string>;
+  tracks: ResourceSubject<number[]>;
+  columns: ResourceSubject<string[]>;
 };
 
 const resOptions: IResourceOptions = {
@@ -42,7 +43,10 @@ async function init() {
   console.log('res1[id]', res1[Symbol.for('id')]);
   console.log('res2[id]', res2[Symbol.for('id')]);
   console.log('#1 res1.value', res1.value);
+
   console.log('#1 res1.tracks.value', res1.tracks.value);
+  console.log('#1 res1.tracks.key', res1.tracks.key);
+  console.log('#1 res1.tracks.parent', res1.tracks.parent);
   console.log('#1 res1.columns.value', res1.columns.value);
 
   console.log('-------------');
