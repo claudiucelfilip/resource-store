@@ -29,14 +29,18 @@ export class Resource extends BehaviorSubject<any> {
     if (!this[symbol.connector]) {
       throw new Error('No connector added to Resource');
     }
-    return this[symbol.connector].fetch().then(response => this.next(response || null));
+    return this[symbol.connector]
+      .fetch(this[symbol.key])
+      .then(response => {
+        this.next(response || this.value);
+      });
   }
 
   public save(key: string = '', value: any = this.value): Promise<any> {
     if (!this[symbol.connector]) {
       throw new Error('No connector added to Resource');
     }
-    return this[symbol.connector].save(key, value);
+    return this[symbol.connector].save(this[symbol.key], this.value);
   }
 
   [symbol.select] (key: string = ''): BehaviorSubject<any> {

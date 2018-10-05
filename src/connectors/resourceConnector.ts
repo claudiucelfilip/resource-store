@@ -1,4 +1,4 @@
 export interface IResourceConnector {
   save(key: string, value: any): Promise<any>;
-  fetch(): Promise<any>;
+  fetch(key: string): Promise<any>;
 }

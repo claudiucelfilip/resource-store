@@ -4,7 +4,8 @@ import {
   ResourceStore,
   columns,
   getRandom,
-  ajaxConnector
+  ajaxConnector,
+  localStorageConnector
  } from './src';
 import { BehaviorSubject } from 'rxjs';
 
@@ -16,7 +17,7 @@ interface TrackData extends Resource {
 };
 
 const resOptions: IResourceOptions = {
-  connector: ajaxConnector,
+  connector: localStorageConnector,
   autoSave: true,
   autoFetch: true,
   initialState: {
