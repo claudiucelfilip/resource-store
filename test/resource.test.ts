@@ -1,13 +1,8 @@
 import { IResourceOptions, Resource, IResourceConnector } from '../src';
 import { BehaviorSubject } from 'rxjs';
 import { symbol } from '../src';
+import { DataResource } from './utils';
 
-interface DataResource extends Resource<any> {
-  key: BehaviorSubject<string>;
-  id: BehaviorSubject<string>;
-  tracks: BehaviorSubject<number[]>;
-  columns: BehaviorSubject<string[]>;
-};
 
 describe('Resource', () => {
   const initialState = {
