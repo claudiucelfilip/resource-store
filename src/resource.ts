@@ -4,7 +4,7 @@ import { symbol } from './utils';
 import { IResourceConnector } from './connectors/resourceConnector';
 
 export interface ResourceSubject<T> extends BehaviorSubject<T> {
-  parent: Resource;
+  parent: Resource<any>;
   key: string
 }
 export interface IResourceOptions {
@@ -14,7 +14,7 @@ export interface IResourceOptions {
   initialState?: any;
 }
 
-export class Resource extends BehaviorSubject<any> {
+export class Resource<T> extends BehaviorSubject<any> {
   constructor(key: string, options: IResourceOptions = {}) {
     let initialState = options.initialState || {};
     super(initialState);
@@ -40,14 +40,14 @@ export class Resource extends BehaviorSubject<any> {
       });
   }
 
-  public save(key: string = '', value: any = this.value): Promise<any> {
+  public save(): Promise<any> {
     if (!this[symbol.connector]) {
       throw new Error('No connector added to Resource');
     }
     return this[symbol.connector].save(this[symbol.key], this.value);
   }
 
-  [symbol.select] (key: string = ''): BehaviorSubject<any> {
+  [symbol.select] (key: string = ''): T | BehaviorSubject<any> {
     if (!key) {
       return this;
     }
@@ -87,7 +87,7 @@ export class Resource extends BehaviorSubject<any> {
     }
   
     if (this[symbol.autoSave]) {
-      return this.save(key, value);
+      return this.save();
     }
   }
 }

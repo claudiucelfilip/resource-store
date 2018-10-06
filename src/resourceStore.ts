@@ -5,29 +5,24 @@ import { Resource } from './resource';
 export class ResourceStore {
   private resources = {};
 
-  constructor(resourceOptions = {}) {
-    Object.keys(resourceOptions)
-      .forEach((key) => {
-        this.add(key, new Resource(key, resourceOptions[key]));
-      });
-  }
+  constructor() {}
 
-  add (key: string, resource: Resource) {
-    this.resources[key] = resource;
+  add (resource: Resource<any>) {
+    this.resources[resource[symbol.key]] = resource;
   }
 
   remove (key: string) {
     delete this.resources[key];
   }
 
-  get<T> (key: string): T | any {
+  get (key: string) {
     const resource = this.resources[key];
     
     if (!resource) {
       throw new Error(`No resources with key ${key} was defined.`);
     }
     const proxy = new Proxy(resource, {
-      get: function (target: Resource, name: string) {
+      get: function (target: Resource<any>, name: string) {
         if (target[name] !== undefined) {
           if (typeof target[name] === 'function') {
             return target[name].bind(target);

@@ -10,7 +10,7 @@ import {
  } from './src';
 import { BehaviorSubject } from 'rxjs';
 
-interface TrackData extends Resource {
+interface TrackData extends Resource<any> {
   key: ResourceSubject<string>;
   id: ResourceSubject<string>;
   tracks: ResourceSubject<number[]>;
@@ -26,15 +26,19 @@ const resOptions: IResourceOptions = {
   }
 };
 
-const resourceStore = new ResourceStore({
-  'res-1': resOptions,
-  'res-2': resOptions
-});
+const resourceStore = new ResourceStore();
+
+const res1 = new Resource<TrackData>('res-1', resOptions);
+const res2 = new Resource<TrackData>('res-2', resOptions);
+
+resourceStore.add(res1);
+resourceStore.add(res2);
+
 
 async function init() {
-  const res1: TrackData = resourceStore.get<TrackData>('res-1');
-  const res2: TrackData = resourceStore.get<TrackData>('res-2');
-  
+  const res1: TrackData = resourceStore.get('res-1');
+  const res2: TrackData = resourceStore.get('res-2');
+
   console.log('--------------');
   console.log('res1.key', res1.key);
   console.log('res1[key]', res1[Symbol.for('key')]);
