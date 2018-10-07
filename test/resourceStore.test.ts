@@ -12,6 +12,7 @@ describe('ResourceStore', () => {
     tracks: [1, 2, 3],
     columns: ['one', 'two', 'three']
   };
+  let res1Ref, res2Ref;
 
   beforeEach(() => {
     const resOptions: IResourceOptions = {
@@ -23,26 +24,32 @@ describe('ResourceStore', () => {
     const res2 = new Resource<DataResource>('res-2', resOptions);
     store.add(res1);
     store.add(res2);
-
+    res1Ref = res1;
+    res2Ref = res2;
   });
 
-  it('should get different resources for different keys', async () => {
+  it('should get different resources by keys', async () => {
     const res1 = store.get('res-1');
     const res2 = store.get('res-2');
+    const res1copy = store.get('res-1');
     
     expect(res1).toBeTruthy();
     expect(res2).toBeTruthy();
 
     expect(res1[symbol.id]).not.toEqual(res2[symbol.id]);
+    expect(res1[symbol.id]).toEqual(res1copy[symbol.id]);
   });
 
-  it('should get different resources for different keys', async () => {
-    const res1 = store.get('res-1');
-    const res2 = store.get('res-1');
+  it('should get different resources by resource instance', async () => {
+    const res1 = store.get(res1Ref);
+    const res2 = store.get(res2Ref);
+    const res1copy = store.get(res1Ref);
+
     expect(res1).toBeTruthy();
     expect(res2).toBeTruthy();
 
-    expect(res1[symbol.id]).toEqual(res2[symbol.id]);
+    expect(res1[symbol.id]).not.toEqual(res2[symbol.id]);
+    expect(res1[symbol.id]).toEqual(res1copy[symbol.id]);
   });
 
   it('should be able to retrieve store key from a stream', async () => {
