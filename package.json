@@ -1,9 +1,8 @@
 {
   "name": "@claudiucelfilip/resource-store",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "main": "lib",
   "scripts": {
-    "postinstall": "npm run build",
     "build": "webpack",
     "watch": "webpack --watch",
     "start": "webpack --mode development",
