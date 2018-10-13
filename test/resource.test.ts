@@ -18,10 +18,10 @@ describe('Resource', () => {
   };
 
   const ajaxConnector: IResourceConnector = {
-    fetch: () => {
+    fetch: (resource) => {
       return new Promise(resolve => setTimeout(() => resolve(nextState), 100));
     },
-    save: (key, value) => {
+    save: (resource) => {
       return new Promise(resolve => setTimeout(resolve, 100));
     }
   };

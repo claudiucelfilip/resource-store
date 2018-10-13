@@ -1,14 +1,14 @@
-import axios from 'axios';
 import { IResourceConnector } from './resourceConnector';
+import { symbol } from '..';
 
 export const localStorageConnector: IResourceConnector = {
-  fetch(key: string) {
-    let data = localStorage.getItem(key);
+  fetch(resource) {
+    let data = localStorage.getItem(resource[symbol.key]);
     data = (data && JSON.parse(data));
     return Promise.resolve(data);
   },
-  save(key: string, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+  save(resource) {
+    localStorage.setItem(resource[symbol.key], JSON.stringify(resource.value));
     return Promise.resolve();
   }
 };
