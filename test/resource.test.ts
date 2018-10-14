@@ -9,7 +9,13 @@ describe('Resource', () => {
     key: 'state-key',
     id: 0,
     tracks: [1, 2, 3],
-    columns: ['one', 'two', 'three']
+    columns: ['one', 'two', 'three'],
+    foo: {
+      label: 'foo',
+      bar: {
+        label: 'bar'
+      }
+    }
   };
 
   const nextState = {

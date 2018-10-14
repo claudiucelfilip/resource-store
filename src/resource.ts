@@ -40,13 +40,13 @@ export class Resource<T> extends BehaviorSubject<any> {
       });
   }
 
-  public next(...args) {
-    let output = BehaviorSubject.prototype.next.call(this, ...args);
-    if (this[symbol.autoSave]) {
-      this.save();
-    }
-    return output;
-  }
+  // public next(...args) {
+  //   let output = BehaviorSubject.prototype.next.call(this, ...args);
+  //   if (this[symbol.autoSave]) {
+  //     this.save();
+  //   }
+  //   return output;
+  // }
 
   public save(options = this): Promise<any> {
     if (!this[symbol.connector]) {
@@ -60,7 +60,10 @@ export class Resource<T> extends BehaviorSubject<any> {
       return this;
     }
 
-    const stream = new BehaviorSubject(this.value[key]);
+    const compoundKey = `${this[symbol.key]}.${key}`;
+    const stream = new Resource<T>(compoundKey, {
+      initialState: this.value[key]
+    });
     this.pipe(
       pluck(key),
       filter(items => items !== null && items !== undefined),
@@ -71,6 +74,7 @@ export class Resource<T> extends BehaviorSubject<any> {
       get: (target, name: string) => {
         switch(name) {
           case 'next': return this[symbol.set].bind(this, key);
+          case 'update': return this[symbol.update].bind(this, key);
           case 'key': return this[symbol.key];
           case 'parent': return this;
           default: return target[name];
@@ -79,7 +83,9 @@ export class Resource<T> extends BehaviorSubject<any> {
     })
     return proxy;
   }
-
+  [symbol.update] (key: string, value: any = {}): Promise<any> | void {
+    return this[symbol.set](key, {...this.value[key], ...value});
+  }
   [symbol.set] (key: string, value: any = {}): Promise<any> | void {
     if (typeof key !== 'string') {
       value = key;

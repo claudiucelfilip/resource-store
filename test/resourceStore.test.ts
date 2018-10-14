@@ -2,16 +2,11 @@ import { ResourceStore } from '../src';
 import { IResourceOptions, Resource } from '../src';
 import { BehaviorSubject } from 'rxjs';
 import { symbol } from '../src';
-import { DataResource } from './utils';
+import { DataResource, initialState } from './utils';
 
 describe('ResourceStore', () => {
   let store: ResourceStore;
-  const initialState = {
-    key: '',
-    id: '',
-    tracks: [1, 2, 3],
-    columns: ['one', 'two', 'three']
-  };
+  
   let res1Ref, res2Ref;
 
   beforeEach(() => {
@@ -94,7 +89,76 @@ describe('ResourceStore', () => {
     expect(res1.id).toBeInstanceOf(BehaviorSubject);
     expect(res1.id.value).toEqual(initialState.id);
     expect(res1[symbol.id]).toBeDefined();
+  });
 
+  it('should create stores at any object level', () => {
+    const res1: any = store.get('res-1');
+    expect(res1).toBeInstanceOf(BehaviorSubject);
+    
+    expect(res1.foo).toBeInstanceOf(BehaviorSubject);
+    expect(res1.foo.value).toEqual(initialState.foo);
+
+    expect(res1.foo.bar).toBeInstanceOf(BehaviorSubject);
+    expect(res1.foo.bar.value).toEqual(initialState.foo.bar);
+
+    expect(res1.foo.bar.foo1).toBeInstanceOf(BehaviorSubject);
+    expect(res1.foo.bar.foo1.value).toEqual(initialState.foo.bar.foo1);
+
+    expect(res1.foo.bar.foo1.bar1).toBeInstanceOf(BehaviorSubject);
+    expect(res1.foo.bar.foo1.bar1.value).toEqual(initialState.foo.bar.foo1.bar1);
+  });
+
+  it('should cache previously created store', () => {
+    const res1: any = store.get('res-1');
+    const res2: any = store.get('res-1');
+    const res22: any = store.get('res-2');
+
+    const foo1 = res1.foo;
+    const foo2 = res1.foo;
+    const bar1 = res1.foo.bar1;
+    const bar2 = res1.foo.bar1;
+    const bar22 = res22.foo.bar1;
+    
+    expect(res1[symbol.id]).toEqual(res2[symbol.id]);
+    expect(res1.foo[symbol.id]).toEqual(res2.foo[symbol.id]);
+
+    expect(foo1[symbol.id]).toEqual(foo2[symbol.id]);
+    expect(bar1[symbol.id]).toEqual(bar2[symbol.id]);
+    expect(bar22[symbol.id]).not.toEqual(bar2[symbol.id]);
+  });
+
+  it('should bypass any resource property by appending $ sign to the peroperty', () => {
+    const res1: any = store.get('res-1');
+
+    expect(res1.value$).toBeInstanceOf(BehaviorSubject);
+    expect(res1.value).toEqual(initialState);
+
+    expect(res1.foo.value$).toBeInstanceOf(BehaviorSubject);
+    expect(res1.foo.value).toEqual(initialState.foo);
+  });
+
+  it('should update specific properties using update', () => {
+    const res1: any = store.get('res-1');
+    const newBarLabel = 'baaar';
+    const newFooLabel = 'foooo';
+
+    expect(res1.value).toEqual(initialState);
+    expect(res1.foo.value).toEqual(initialState.foo);
+    expect(res1.foo.value.label).toEqual(initialState.foo.label);
+
+    expect(res1.foo.bar.value).toEqual(initialState.foo.bar);
+    expect(res1.foo.bar.value.label).toEqual(initialState.foo.bar.label);
+
+    res1.foo.update({
+      label: newFooLabel
+    });
+    res1.foo.bar.update({
+      label: newBarLabel
+    });
+
+    expect(res1.value).not.toEqual(initialState);
+    expect(res1.foo.value.label).toEqual(newFooLabel);
+    expect(res1.foo.bar.value.label).toEqual(newBarLabel);
   });
 
 });

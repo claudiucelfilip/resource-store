@@ -3,46 +3,51 @@ import { Resource } from './resource';
 
 
 export class ResourceStore {
-  private resources = {};
+  private stores = {};
 
   constructor() {}
 
   add (resource: Resource<any>) {
-    this.resources[resource[symbol.key]] = resource;
+    this.stores[resource[symbol.key]] = this.makeStore(resource);
+  }
+
+  addStore (store: ProxyHandler<any>) {
+    this.stores[store[symbol.key]] = store;
   }
 
   remove (key: string) {
-    delete this.resources[key];
+    delete this.stores[key];
   }
 
-  get (key: string | Resource<any>) {
-    let resource;
+  makeStore(resource: Resource<any>) {
+    let store = new Proxy(resource, {
+      get: (target: Resource<any>, name: string) => {
 
-    if (typeof key === 'string') {
-      resource = this.resources[key as string];
-    } else {
-      resource = Object.keys(this.resources)
-        .map(key => this.resources[key])
-        .find(resource => resource === key);
-    }
-    
-    if (!resource) {
-      throw new Error(`No resource with key ${key} was defined.`);
-    }
-    const proxy = new Proxy(resource, {
-      get: function (target: Resource<any>, name: string) {
         if (target[name] !== undefined) {
           if (typeof target[name] === 'function') {
             return target[name].bind(target);
           }
           return target[name];
         }
-
-        let stream = resource[symbol.select](name);
-        return stream;
+        
+        name = name.replace(/\$$/, '');
+        const compoundKey = (`${target[symbol.key]}.${name}`);
+        return this.get(compoundKey, true) || this.makeStore(resource[symbol.select](name)); //this.get(resource[symbol.select](name));
       }
     });
+    
+    this.addStore(store);
+    return store;
+  }
 
-    return proxy;
+  get (keyResource: string | Resource<any>, dontThrow = false) {
+    let key: string = keyResource[symbol.key] || keyResource;
+    let resource = this.stores[key];
+
+    if (!resource && !dontThrow) {
+      throw new Error(`No resource with key ${key[symbol.key] || key} was defined.`);
+    }
+    
+    return resource;
   }
 }
