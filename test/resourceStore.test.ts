@@ -139,6 +139,7 @@ describe('ResourceStore', () => {
 
   it('should update specific properties using update', () => {
     const res1: any = store.get('res-1');
+    const newResLabel = 'res-label';
     const newBarLabel = 'baaar';
     const newFooLabel = 'foooo';
 
@@ -149,6 +150,9 @@ describe('ResourceStore', () => {
     expect(res1.foo.bar.value).toEqual(initialState.foo.bar);
     expect(res1.foo.bar.value.label).toEqual(initialState.foo.bar.label);
 
+    res1.update({
+      label: newFooLabel
+    });
     res1.foo.update({
       label: newFooLabel
     });
