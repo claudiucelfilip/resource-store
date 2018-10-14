@@ -74,7 +74,6 @@ export class Resource<T> extends BehaviorSubject<any> {
       get: (target, name: string) => {
         switch(name) {
           case 'next': return this[symbol.set].bind(this, key);
-          case 'update': return this[symbol.update].bind(this, key);
           case 'key': return this[symbol.key];
           case 'parent': return this;
           default: return target[name];
@@ -83,7 +82,11 @@ export class Resource<T> extends BehaviorSubject<any> {
     })
     return proxy;
   }
-  [symbol.update] (key: string, value: any = {}): Promise<any> | void {
+  update (key: string, value: any = {}): Promise<any> | void {
+    if (typeof key !== 'string') {
+      value = key;
+      key = '';
+    }
     return this[symbol.set](key, {...this.value[key], ...value});
   }
   [symbol.set] (key: string, value: any = {}): Promise<any> | void {
