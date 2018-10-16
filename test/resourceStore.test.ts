@@ -23,6 +23,14 @@ describe('ResourceStore', () => {
     res2Ref = res2;
   });
 
+  it('should be able to create new resource', async () => {
+    const res3 = store.create('res-3', {
+      initialState
+    });
+    expect(res3).toBeTruthy();
+    expect(res3.value).toEqual(initialState);
+  });
+  
   it('should get different resources by keys', async () => {
     const res1 = store.get('res-1');
     const res2 = store.get('res-2');

@@ -59,10 +59,10 @@ const resOptions: IResourceOptions = {
 const resourceStore = new ResourceStore();
 
 const res1 = new Resource<any>('res-1', resOptions);
-const res2 = new Resource<any>('res-2', resOptions);
+const res2 = resourceStore.create('res-2', resOptions);
 
 resourceStore.add(res1);
-resourceStore.add(res2);
+// resourceStore.add(res2);
 
 
 async function init () {

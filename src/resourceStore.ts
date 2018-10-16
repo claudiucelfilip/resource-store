@@ -8,7 +8,13 @@ export class ResourceStore {
   constructor() {}
 
   add (resource: Resource<any>) {
-    this.stores[resource[symbol.key]] = this.makeStore(resource);
+    const store = this.makeStore(resource);
+    this.stores[resource[symbol.key]] = store;
+    return store;
+  }
+
+  create (key: string, options?) {
+    return this.add(new Resource(key, options));
   }
 
   addStore (store: ProxyHandler<any>) {
