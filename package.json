@@ -1,6 +1,6 @@
 {
   "name": "@claudiucelfilip/resource-store",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "main": "lib",
   "scripts": {
     "build": "webpack",

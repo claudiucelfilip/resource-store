@@ -1,20 +1,11 @@
 import { BehaviorSubject } from 'rxjs';
 import { pluck, distinctUntilChanged, filter, skip, shareReplay, switchMap, publish } from 'rxjs/operators';
 import { symbol } from './utils';
-import { IResourceConnector } from './connectors/resourceConnector';
+import { IResourceOptions, IResource } from '.';
 
-export interface ResourceSubject<T> extends BehaviorSubject<T> {
-  parent: Resource<any>;
-  key: string
-}
-export interface IResourceOptions {
-  connector?: IResourceConnector;
-  autoSave?: boolean;
-  autoFetch?: boolean;
-  initialState?: any;
-}
 
-export class Resource<T> extends BehaviorSubject<any> {
+export class Resource extends BehaviorSubject<any> implements IResource {
+  
   constructor(key: string, options: IResourceOptions = {}) {
     let initialState = options.initialState || {};
     super(initialState);
@@ -23,7 +14,7 @@ export class Resource<T> extends BehaviorSubject<any> {
     this[symbol.connector] = options.connector;
     this[symbol.autoSave] = options.autoSave;
     this[symbol.autoFetch] = options.autoFetch;
-
+    
     if (this[symbol.autoFetch]) {
       this.fetch();
     }
@@ -55,13 +46,13 @@ export class Resource<T> extends BehaviorSubject<any> {
     return this[symbol.connector].save(options);
   }
 
-  [symbol.select] (key: string = ''): T | BehaviorSubject<any> {
+  [symbol.select] (key: string = ''): BehaviorSubject<any> {
     if (!key) {
       return this;
     }
 
     const compoundKey = `${this[symbol.key]}.${key}`;
-    const stream = new Resource<T>(compoundKey, {
+    const stream = new Resource(compoundKey, {
       initialState: this.value[key]
     });
     this.pipe(
@@ -75,18 +66,15 @@ export class Resource<T> extends BehaviorSubject<any> {
         switch(name) {
           case 'next': return this[symbol.set].bind(this, key);
           case 'key': return this[symbol.key];
-          case 'parent': return this;
+          case 'parent': return target;
           default: return target[name];
         }
       }
     })
     return proxy;
   }
-  update (key: string, value: any = {}): Promise<any> | void {
-    if (typeof key !== 'string') {
-      value = key;
-      key = '';
-    }
+  update (value: any = {}): void {
+    const key = '';
     return this[symbol.set](key, {...this.value[key], ...value});
   }
   [symbol.set] (key: string, value: any = {}): Promise<any> | void {

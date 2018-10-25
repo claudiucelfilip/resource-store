@@ -1,8 +1,7 @@
-import { ResourceStore } from '../src';
-import { IResourceOptions, Resource } from '../src';
+import { ResourceStore, IResourceOptions, IResource } from '../src';
 import { BehaviorSubject } from 'rxjs';
 import { symbol } from '../src';
-import { DataResource, initialState } from './utils';
+import { initialState, DataResource } from './utils';
 
 describe('ResourceStore', () => {
   let store: ResourceStore;
@@ -15,10 +14,8 @@ describe('ResourceStore', () => {
     };
 
     store = new ResourceStore();
-    const res1 = new Resource<DataResource>('res-1', resOptions);
-    const res2 = new Resource<DataResource>('res-2', resOptions);
-    store.add(res1);
-    store.add(res2);
+    const res1 = store.create('res-1', resOptions);
+    const res2 = store.create('res-2', resOptions);
     res1Ref = res1;
     res2Ref = res2;
   });
@@ -56,12 +53,12 @@ describe('ResourceStore', () => {
   });
 
   it('should be able to retrieve store key from a stream', async () => {
-    const res1 = store.get('res-1');
+    const res1: DataResource = store.get('res-1');
     expect(res1.tracks.key).toEqual('res-1');
   });
 
   it('should be able to retrieve parent store from a stream', async () => {
-    const res1 = store.get('res-1');
+    const res1: DataResource = store.get('res-1');
     expect(res1.tracks.parent[symbol.key]).toEqual('res-1');
   });
 
@@ -70,7 +67,7 @@ describe('ResourceStore', () => {
   });
 
   it('should return streams for each resource key with the initial states of each', async () => {
-    const res1 = store.get('res-1');
+    const res1: DataResource = store.get('res-1');
 
     expect(res1.value).toEqual(initialState);
     expect(res1.key.value).toEqual(initialState.key);
@@ -80,7 +77,7 @@ describe('ResourceStore', () => {
   });
 
   it('should access value for each resource method: fetch, save, pipe, subscribe, complete', async () => {
-    const res1 = store.get('res-1');
+    const res1: DataResource = store.get('res-1');
     expect(res1.fetch).toBeInstanceOf(Function);
     expect(res1.save).toBeInstanceOf(Function);
     expect(res1.pipe).toBeInstanceOf(Function);
@@ -89,7 +86,7 @@ describe('ResourceStore', () => {
   });
 
   it('should return the data property instead of resource (eg. key/id should be a stream insted of resources\'s key/id prop', async () => {
-    const res1 = store.get('res-1');
+    const res1: DataResource = store.get('res-1');
     expect(res1.key).toBeInstanceOf(BehaviorSubject);
     expect(res1.key.value).toEqual(initialState.key);
     expect(res1[symbol.key]).toEqual('res-1');
@@ -100,7 +97,7 @@ describe('ResourceStore', () => {
   });
 
   it('should create stores at any object level', () => {
-    const res1: any = store.get('res-1');
+    const res1: DataResource = store.get('res-1');
     expect(res1).toBeInstanceOf(BehaviorSubject);
     
     expect(res1.foo).toBeInstanceOf(BehaviorSubject);

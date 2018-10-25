@@ -1,14 +1,10 @@
 import {
-  Resource,
   IResourceOptions,
   ResourceStore,
   columns,
   getRandom,
-  ajaxConnector,
   localStorageConnector,
-  ResourceSubject
 } from './src';
-import { BehaviorSubject } from 'rxjs';
 import { map, share, shareReplay } from 'rxjs/operators';
 
 // interface any extends Resource<any> {
@@ -58,11 +54,8 @@ const resOptions: IResourceOptions = {
 
 const resourceStore = new ResourceStore();
 
-const res1 = new Resource<any>('res-1', resOptions);
-const res2 = resourceStore.create('res-2', resOptions);
-
-resourceStore.add(res1);
-// resourceStore.add(res2);
+resourceStore.create('res-1', resOptions);
+resourceStore.create('res-2', resOptions);
 
 
 async function init () {

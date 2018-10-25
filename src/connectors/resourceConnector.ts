@@ -1,6 +1,6 @@
-import { Resource } from '../';
+import { ResourceStore } from '../';
 
 export interface IResourceConnector {
-  save (context: Resource<any>): Promise<any>;
-  fetch (context: Resource<any>): Promise<any>;
+  save (context?: ResourceStore | any): Promise<any>;
+  fetch (context?: ResourceStore | any): Promise<any>;
 }
