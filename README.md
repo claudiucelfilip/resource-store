@@ -1,16 +1,7 @@
 # Resource-store
 
 Small state management library based on RxJS.
-
-
-resources-tore is state container designed to spread reactive state
-
-* 
-
-These core principles enable building components that can use the `OnPush`
-change detection strategy giving you
-[intelligent, performant change detection](https://blog.thoughtram.io/angular/2016/02/22/angular-2-change-detection-explained.html#smarter-change-detection)
-throughout your application.
+Resources-tore is state container designed to spread reactive state management accross your application.
 
 ## Installation
 
@@ -21,15 +12,6 @@ Install resource-store from npm:
 ## Basic Usage
 ```ts
 import { IResourceOptions, ResourceStore, IResourceConnector, symbol, IResource } from '@claudiucelfilip/resource-store';
-
-class SimpleConnector implements IResourceConnector {
-  save (context?: ResourceStore | any): Promise<any> {
-    return // Promise to sync with external store
-  }
-  fetch (context?: ResourceStore | any): Promise<any> {
-    return // Promise to fetch from external store
-  }
-}
 
 const store: ResourceStore = new ResourceStore();
 const options1: IResourceOptions = {
@@ -46,12 +28,6 @@ const options1: IResourceOptions = {
   }
 };
 
-const options2: IResourceOptions = {
-  connector: new SimpleConnector,
-  autoFetch: false,
-  autoSave: true
-};
-
 const resourceOne: IResource = store.create('resource-one', options1);
 store.create('resource-two', options2);
 
@@ -66,15 +42,32 @@ resourceOne.obj1.obj2.update({
 
 resourceOne[symbol.id]; // nonconflicting access to unique id
 resourceOne[symbol.key]; // nonconflicting accesto to defined key (ie. 'resource-one')
+```
+## Sync with external storage
+```ts
+class SimpleConnector implements IResourceConnector {
+  save (context?: ResourceStore | any): Promise<any> {
+    return // Promise to sync with external store
+  }
+  fetch (context?: ResourceStore | any): Promise<any> {
+    return // Promise to fetch from external store
+  }
+}
+
+const options2: IResourceOptions = {
+  connector: new SimpleConnector,
+  autoFetch: false,
+  autoSave: true
+};
 
 const resourceTwo: IResource = store.get('resource-two');
-resourceTwo.newProperty instanceof BehaviorSubject;  // will generate a new empty observable
-resourceTwo.fetch();
+
+resourceTwo.newProperty;  // will generate a new empty resource observable
+resourceTwo.fetch(); // will update state with whatever's fetched from the external store
 
 resourceTwo.next({
   property1: 'new value'
 }); // setting autoSave: true, atomatically triggers resourceTwo.save()
-
 
 ```
 The store creates enhanced RxJS `BehaviorSubject` proxies which can:
