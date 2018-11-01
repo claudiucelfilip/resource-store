@@ -73,7 +73,7 @@ resourceTwo.next({
 The store creates enhanced RxJS `BehaviorSubject` proxies which can:
 * accessing any property on the resource creates new observables (eg. `resourceOne.text instanceof BehaviorSubject`). These are created and cached, on-demand on any level.
 * `resourceOne.obj1.obj2.next(newState)` replaces value with a new one and bubbles up the object tree
-* `resourceOne.text.update({
+* `resourceOne.update({
   text: 'string text2'
 })` will only replace the `text` property
 * all other `BehaviorSubject` functionality applies
