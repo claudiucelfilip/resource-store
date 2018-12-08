@@ -1,21 +1,22 @@
-import { IResourceOptions, Resource, IResourceConnector } from '../../src';
+import { IResourceOptions, IResource } from '../../src';
 
 import { localStorageConnector } from '../../src/connectors/localStorageConnector';
 
-import { DataResource, initialState } from '../utils';
+import { initialState } from '../utils';
 import { ResourceStore } from '../../src';
 
 
 describe('localStorageConnector', () => {
   let store: ResourceStore;
+  
   const resOptions: IResourceOptions = {
     connector: localStorageConnector
   };
 
   beforeEach(() => {
     store = new ResourceStore();
-    const res1 = new Resource<DataResource>('res-1', resOptions);
-    const res2 = new Resource<DataResource>('res-2', resOptions);
+    const res1 = store.create('res-1', resOptions);
+    const res2 = store.create('res-2', resOptions);
     store.add(res1);
     store.add(res2);
   });
@@ -27,7 +28,7 @@ describe('localStorageConnector', () => {
 
   it('should be able to fetch previously save values', async () => {
     window.localStorage.setItem('res-1', JSON.stringify(initialState))
-    const res1 = store.get('res-1');
+    const res1: IResource = store.get('res-1');
     await res1.fetch();
 
     expect(res1.value).toEqual(initialState);
@@ -35,7 +36,7 @@ describe('localStorageConnector', () => {
 
   it('should be able to save new values', async () => {
     window.localStorage.setItem('res-1', JSON.stringify(initialState));
-    const res1 = store.get('res-1');
+    const res1: IResource = store.get('res-1');
     await res1.fetch();
     expect(res1.value).toEqual(initialState);
 

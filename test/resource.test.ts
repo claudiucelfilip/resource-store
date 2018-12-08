@@ -1,4 +1,5 @@
-import { IResourceOptions, Resource, IResourceConnector } from '../src';
+import { IResourceOptions, IResourceConnector } from '../src';
+import { Resource } from '../src/resource';
 import { BehaviorSubject } from 'rxjs';
 import { symbol } from '../src';
 import { DataResource } from './utils';
@@ -37,7 +38,7 @@ describe('Resource', () => {
   };
 
   it('should create a BehaviorSubject stream with the initial state', async () => {
-    const res1: any = new Resource<DataResource>('res-1', {
+    const res1: any = new Resource('res-1', {
       initialState
     });
     expect(res1).toBeInstanceOf(BehaviorSubject);
@@ -45,7 +46,7 @@ describe('Resource', () => {
   });
   
   it('should use a connector to fetch and save', async () => {
-    const res1: any = new Resource<DataResource>('res-1', {
+    const res1: any = new Resource('res-1', {
       connector: ajaxConnector
     });
 
@@ -64,7 +65,7 @@ describe('Resource', () => {
   it('should automatically fetch data on creation if autoFetch is true', async () => {
     const fetchSpy = jest.spyOn(Resource.prototype, 'fetch');
 
-    const res1: any = new Resource<DataResource>('res-1', {
+    const res1: any = new Resource('res-1', {
       connector: ajaxConnector,
       autoFetch: true
     });
@@ -73,7 +74,7 @@ describe('Resource', () => {
   });
 
   it('should automatically save when data has been altered is true', async () => {
-    const res1: any = new Resource<DataResource>('res-1', {
+    const res1: any = new Resource('res-1', {
       connector: ajaxConnector,
       autoSave: true
     });
