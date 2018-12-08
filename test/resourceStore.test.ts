@@ -1,11 +1,11 @@
 import { ResourceStore, IResourceOptions, IResource } from '../src';
 import { BehaviorSubject } from 'rxjs';
 import { symbol } from '../src';
-import { initialState, DataResource } from './utils';
+import { initialState } from './utils';
 
 describe('ResourceStore', () => {
   let store: ResourceStore;
-  
+
   let res1Ref, res2Ref;
 
   beforeEach(() => {
@@ -27,12 +27,12 @@ describe('ResourceStore', () => {
     expect(res3).toBeTruthy();
     expect(res3.value).toEqual(initialState);
   });
-  
+
   it('should get different resources by keys', async () => {
     const res1 = store.get('res-1');
     const res2 = store.get('res-2');
     const res1copy = store.get('res-1');
-    
+
     expect(res1).toBeTruthy();
     expect(res2).toBeTruthy();
 
@@ -53,12 +53,12 @@ describe('ResourceStore', () => {
   });
 
   it('should be able to retrieve store key from a stream', async () => {
-    const res1: DataResource = store.get('res-1');
+    const res1: any = store.get('res-1');
     expect(res1.tracks.key).toEqual('res-1');
   });
 
   it('should be able to retrieve parent store from a stream', async () => {
-    const res1: DataResource = store.get('res-1');
+    const res1: any = store.get('res-1');
     expect(res1.tracks.parent[symbol.key]).toEqual('res-1');
   });
 
@@ -67,7 +67,7 @@ describe('ResourceStore', () => {
   });
 
   it('should return streams for each resource key with the initial states of each', async () => {
-    const res1: DataResource = store.get('res-1');
+    const res1: any = store.get('res-1');
 
     expect(res1.value).toEqual(initialState);
     expect(res1.key.value).toEqual(initialState.key);
@@ -77,7 +77,7 @@ describe('ResourceStore', () => {
   });
 
   it('should access value for each resource method: fetch, save, pipe, subscribe, complete', async () => {
-    const res1: DataResource = store.get('res-1');
+    const res1: any = store.get('res-1');
     expect(res1.fetch).toBeInstanceOf(Function);
     expect(res1.save).toBeInstanceOf(Function);
     expect(res1.pipe).toBeInstanceOf(Function);
@@ -86,7 +86,7 @@ describe('ResourceStore', () => {
   });
 
   it('should return the data property instead of resource (eg. key/id should be a stream insted of resources\'s key/id prop', async () => {
-    const res1: DataResource = store.get('res-1');
+    const res1: any = store.get('res-1');
     expect(res1.key).toBeInstanceOf(BehaviorSubject);
     expect(res1.key.value).toEqual(initialState.key);
     expect(res1[symbol.key]).toEqual('res-1');
@@ -97,9 +97,9 @@ describe('ResourceStore', () => {
   });
 
   it('should create stores at any object level', () => {
-    const res1: DataResource = store.get('res-1');
+    const res1: any = store.get('res-1');
     expect(res1).toBeInstanceOf(BehaviorSubject);
-    
+
     expect(res1.foo).toBeInstanceOf(BehaviorSubject);
     expect(res1.foo.value).toEqual(initialState.foo);
 
@@ -110,7 +110,9 @@ describe('ResourceStore', () => {
     expect(res1.foo.bar.foo1.value).toEqual(initialState.foo.bar.foo1);
 
     expect(res1.foo.bar.foo1.bar1).toBeInstanceOf(BehaviorSubject);
-    expect(res1.foo.bar.foo1.bar1.value).toEqual(initialState.foo.bar.foo1.bar1);
+    expect(res1.foo.bar.foo1.bar1.value).toEqual(
+      initialState.foo.bar.foo1.bar1
+    );
   });
 
   it('should cache previously created store', () => {
@@ -123,7 +125,7 @@ describe('ResourceStore', () => {
     const bar1 = res1.foo.bar1;
     const bar2 = res1.foo.bar1;
     const bar22 = res22.foo.bar1;
-    
+
     expect(res1[symbol.id]).toEqual(res2[symbol.id]);
     expect(res1.foo[symbol.id]).toEqual(res2.foo[symbol.id]);
 
@@ -170,4 +172,40 @@ describe('ResourceStore', () => {
     expect(res1.foo.bar.value.label).toEqual(newBarLabel);
   });
 
+  it('should be able to dispatch actions', () => {
+    const res1: any = store.get('res-1');
+    const newLabel = 'new value';
+    const newLabel2 = 'new value 2';
+
+    const setFooLabel = res => {
+      res.foo.label = newLabel;
+    };
+
+    const setCustomLabel = value => res => {
+      res.label = value;
+    };
+
+    res1.dispatch(setFooLabel);
+    expect(res1.foo.label.value).toEqual(newLabel);
+
+    res1.foo.dispatch(setCustomLabel(newLabel2));
+    expect(res1.foo.label.value).toEqual(newLabel2);
+  });
+
+  it('should be able to dispatch async actions', async () => {
+    const res1: any = store.get('res-1');
+    const asyncNewLabel = 'new async value';
+
+    const asyncSetLabelAction = res => {
+      return new Promise(resolve =>
+        setTimeout(() => {
+          res.label = asyncNewLabel;
+          resolve();
+        }, 1000)
+      );
+    };
+
+    await res1.foo.dispatch(asyncSetLabelAction);
+    expect(res1.foo.label.value).toEqual(asyncNewLabel);
+  });
 });

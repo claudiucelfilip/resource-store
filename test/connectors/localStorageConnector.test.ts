@@ -15,10 +15,8 @@ describe('localStorageConnector', () => {
 
   beforeEach(() => {
     store = new ResourceStore();
-    const res1 = store.create('res-1', resOptions);
-    const res2 = store.create('res-2', resOptions);
-    store.add(res1);
-    store.add(res2);
+    store.create('res-1', resOptions);
+    store.create('res-2', resOptions);
   });
 
   const nextState = {

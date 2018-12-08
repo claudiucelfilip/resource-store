@@ -29,10 +29,18 @@ export class ResourceStore {
     let store = new Proxy(resource, {
       get: (target: Resource, name: string) => {
 
+        if (name === 'dispatch') {
+          return target[name].bind(this.get(target));
+        }
+
         if (target[name] !== undefined) {
           if (typeof target[name] === 'function') {
             return target[name].bind(target);
           }
+          return target[name];
+        }
+
+        if (typeof name === 'symbol') {
           return target[name];
         }
 

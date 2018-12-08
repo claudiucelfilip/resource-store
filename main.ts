@@ -197,8 +197,32 @@ function init4 () {
     label: 'foooo2'
   });
 }
+const setFooLabelAction = (payload) => (res) => {
+  res.foo.label = payload;
+};
+const setLabelAction = (payload) => (res) => {
+  res.label = payload;
+};
+
+const asyncSetLabelAction = (res) => {
+  setTimeout(() => {
+    res.label = 'new async value';
+  }, 1000);
+}
+
+function init5() {
+  console.log('init5');
+  const res1 = resourceStore.get('res-1');
+
+  res1.foo.label.subscribe(value => console.log(value));
+
+  res1.dispatch(setFooLabelAction('new value'));
+  res1.foo.dispatch(setLabelAction('new value 2'));
+  res1.foo.dispatch(asyncSetLabelAction);
+}
 // init();
 // init2();
 // init3();
 
-init4();
+// init4();
+init5();
