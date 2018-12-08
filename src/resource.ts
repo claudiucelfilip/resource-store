@@ -14,6 +14,11 @@ export interface IResourceOptions {
   initialState?: any;
 }
 
+export interface Action {
+  type: string;
+  payload?: any
+}
+
 export class Resource<T> extends BehaviorSubject<any> {
   constructor(key: string, options: IResourceOptions = {}) {
     let initialState = options.initialState || {};
@@ -78,6 +83,10 @@ export class Resource<T> extends BehaviorSubject<any> {
           case 'parent': return this;
           default: return target[name];
         }
+      },
+      set: (target: any, name: any, value: any) => {
+        target[symbol.select](name).next(value);
+        return true;
       }
     })
     return proxy;
@@ -89,6 +98,7 @@ export class Resource<T> extends BehaviorSubject<any> {
     }
     return this[symbol.set](key, {...this.value[key], ...value});
   }
+
   [symbol.set] (key: string, value: any = {}): Promise<any> | void {
     if (typeof key !== 'string') {
       value = key;
@@ -106,5 +116,9 @@ export class Resource<T> extends BehaviorSubject<any> {
     if (this[symbol.autoSave]) {
       return this.save();
     }
+  }
+
+  dispatch(action) {
+    return action(this);
   }
 }

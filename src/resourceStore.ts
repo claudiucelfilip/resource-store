@@ -29,13 +29,21 @@ export class ResourceStore {
     let store = new Proxy(resource, {
       get: (target: Resource<any>, name: string) => {
 
+        if (name === 'dispatch') {
+          return target[name].bind(this.get(target));
+        }
+
         if (target[name] !== undefined) {
           if (typeof target[name] === 'function') {
             return target[name].bind(target);
           }
           return target[name];
         }
-        
+
+        if (typeof name === 'symbol') {
+          return target[name];
+        }
+
         name = name.replace(/\$$/, '');
         const compoundKey = (`${target[symbol.key]}.${name}`);
         return this.get(compoundKey, true) || this.makeStore(resource[symbol.select](name)); //this.get(resource[symbol.select](name));
