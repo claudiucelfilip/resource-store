@@ -55,6 +55,7 @@ export class Resource extends BehaviorSubject<any> implements IResource {
     const stream = new Resource(compoundKey, {
       initialState: this.value[key]
     });
+
     this.pipe(
       pluck(key),
       filter(items => items !== null && items !== undefined),
@@ -63,10 +64,12 @@ export class Resource extends BehaviorSubject<any> implements IResource {
 
     const proxy = new Proxy(stream, {
       get: (target, name: string) => {
+        // 'this' is the parent object
+
         switch(name) {
           case 'next': return this[symbol.set].bind(this, key);
           case 'key': return this[symbol.key];
-          case 'parent': return target;
+          case 'parent': return this;
           default: return target[name];
         }
       },
